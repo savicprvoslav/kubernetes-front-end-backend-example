@@ -1,0 +1,25 @@
+apiVersion: v1
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location /service/ {
+            proxy_pass http://tomcat.default:8082/app/;
+        }
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+    }
+kind: ConfigMap
+metadata:
+  name: webapp-default-conf

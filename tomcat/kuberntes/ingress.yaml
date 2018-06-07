@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: tomcat
+spec:
+  tls:
+    - hosts:
+      - minikubetomcat
+      secretName: minikubetomcat-secret
+  rules:
+  - host: minikubetomcat
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: tomcat
+          servicePort: 8082

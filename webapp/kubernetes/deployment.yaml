@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - image: pscode/webapp:v1
+        name: webapp
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "cp"
+              - "-a"
+              - "/html/."
+              - "/app"
+        volumeMounts:
+        - mountPath: /app
+          name: app-volume
+      - image: nginx:alpine
+        name: nginx
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+             cpu: 10m
+             memory: 20Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 15
+          timeoutSeconds: 20
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: app-volume
+        - mountPath: /etc/nginx/conf.d
+          name: config-volume
+      volumes:
+      - name: app-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: webapp-default-conf
+          items:
+          - key: default.conf
+            path: default.conf

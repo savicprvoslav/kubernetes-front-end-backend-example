@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+  name: webapp
+spec:
+  tls:
+    - hosts:
+      - minikubewebapp
+      secretName: minikubewebapp-secret
+  rules:
+  - host: minikubewebapp
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: webapp
+          servicePort: 8081

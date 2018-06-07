@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat
+  labels:
+    app: tomcat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomcat
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: 
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+         app: tomcat
+    spec:
+      containers:
+      - image: pscode/tomcat:v1
+        name: war
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "cp"
+              - "/app.war"
+              - "/app"
+        volumeMounts:
+        - mountPath: /app
+          name: app-volume
+      - image: tomcat:7
+        name: tomcat
+        env:
+         - name: JAVA_OPTS
+           value: -Xmx300m -Xms300m -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps
+        volumeMounts:
+        - mountPath: /usr/local/tomcat/webapps/
+          name: app-volume
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 200m
+            memory: 400Mi
+          requests:
+             cpu: 200m
+             memory: 400Mi
+        readinessProbe:
+          httpGet:
+            path: /app
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 10
+        livenessProbe:
+            httpGet:
+              path: /app
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 20
+            timeoutSeconds: 20
+      volumes:
+      - name: app-volume
+        emptyDir: {}
