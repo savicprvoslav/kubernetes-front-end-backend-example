@@ -2,7 +2,6 @@
  
  docker build . -t pscode/webapp:v1
 
- docker tag pscode/webapp:v1 localhost:5000/pscode/webapp:v1
 
 #####Run the image
 
@@ -20,7 +19,6 @@ Note: For minikube enable ingress
 
 ##### Initialize 
 eval $(minikube docker-env)
-docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
 
 ##### Create webapp
