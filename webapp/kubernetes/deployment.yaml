@@ -25,6 +25,8 @@ spec:
               - "-a"
               - "/html/."
               - "/app"
+        command: [ "/bin/sh", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]              
         volumeMounts:
         - mountPath: /app
           name: app-volume
