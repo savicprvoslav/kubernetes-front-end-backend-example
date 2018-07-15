@@ -23,7 +23,9 @@ eval $(minikube docker-env)
 
 ##### Create webapp
 kubectl create -f deployment.yaml
+
 kubectl create -f service.yaml
+
 kubectl create -f ingress.yaml
 
 
