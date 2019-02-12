@@ -153,7 +153,7 @@ spec:
     app: tomcat
 ```
 
-### Craate kubernetes ingress
+### Create kubernetes ingress
 Ingress is a feature that allows proxing request from outside of the cluster to the services and pods. 
 
 ```
